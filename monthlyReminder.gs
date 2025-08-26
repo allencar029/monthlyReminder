@@ -1,6 +1,5 @@
 const FAILURE_NOTIFY = "FAILUREEMAIL@gmail.com"
 const RECIPIENT = "RECEPIENT@gmail.com"
-const IMAGE_ID = "imageId"
 const PDF_ID = "pdfId"
 
 function sendReminder() {
@@ -9,7 +8,6 @@ function sendReminder() {
     const html = `
         <p>Below is your monthly Water Bill. Please pay via Venmo to @venmo-recepient within 30 days.</p>
         <p>Thank you</p>
-        <p><img src="cid:logo" alt="Logo"></p>
         `
 
     sendEmail(RECIPIENT, subject, body, html)
@@ -18,13 +16,11 @@ function sendReminder() {
 function sendEmail(recipient, subject, body, html){
 
     const pdfId = PDF_ID
-    const imageId = IMAGE_ID
 
-    let pdfBlob, imageBlob
+    let pdfBlob
 
     try {
         pdfBlob = DriveApp.getFileById(pdfId).getBlob().setName("Water_Bill_Invoice.pdf")
-        imageBlob = DriveApp.getFileById(imageId).getBlob()
     } catch (err) {
         const msg = `Asset fetch failed: ${err && err.message}`
         Logger.log(msg)
@@ -35,10 +31,7 @@ function sendEmail(recipient, subject, body, html){
 
     const opts = {
         htmlBody: html,
-        attachments: [pdfBlob],
-        inlineImages: {
-        logo: imageBlob
-        }
+        attachments: [pdfBlob]
     }
 
     try {

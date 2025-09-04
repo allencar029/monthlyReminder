@@ -34,7 +34,8 @@ function sendEmail(recipient, subject, body, html){
 
     const opts = {
         htmlBody: html,
-        attachments: [pdfBlob]
+        attachments: [pdfBlob],
+        replyTo: "scott@colemererealty.com"
     }
 
     try {
@@ -83,6 +84,7 @@ function createDailyTrigger() {
     ScriptApp.newTrigger("monthlyReminder")
         .timeBased()
         .atHour(alertTime)
+        .nearMinute(0)
         .everyDays(1)
         .create()
 

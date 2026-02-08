@@ -67,7 +67,7 @@ function sendEmail(recipient, subject, body, html){
     const opts = {
         htmlBody: html,
         attachments: [pdfBlob],
-        replyTo: "scott@colemererealty.com"
+        replyTo: "test@gmail.com"
     }
 
     try {

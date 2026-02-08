@@ -11,6 +11,5 @@ This Apps Script sends a monthly water bill reminder email with:
 3. Replace placeholder values:
    - `FAILURE_NOTIFY` -> email of the person who you want to be notified when the script fails
    - `RECIPIENT` -> recipient email
-   - `PDF_ID` -> Drive file ID of invoice PDF
-   - `IMAGE_ID` -> Drive file ID of logo image
+   - `FOLDER_ID` -> Drive folder ID of invoice PDF
 4. Set up a time-driven trigger in Apps Script to run `monthlyReminder` monthly

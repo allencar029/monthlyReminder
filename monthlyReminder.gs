@@ -1,6 +1,6 @@
 const FAILURE_NOTIFY = "FAILUREEMAIL@gmail.com"
 const RECIPIENT = "RECIPIENT@gmail.com"
-const PDF_ID = "pdfId"
+const FOLDER_ID = "testID"
 const SP = PropertiesService.getScriptProperties()
 const TZ = Session.getScriptTimeZone()
 const alertTime = 10
@@ -16,20 +16,52 @@ function sendReminder() {
     sendEmail(RECIPIENT, subject, body, html)
 }
 
-function sendEmail(recipient, subject, body, html){
+function grabFile(){
+    const folder = DriveApp.getFolderById(FOLDER_ID)
+    const files = folder.getFiles()
 
-    const pdfId = PDF_ID
+    if (!files.hasNext()){
+        Logger.log("No files in folder")
+        const msg = `${folder} has no files, add files`
+        try { GmailApp.sendEmail(FAILURE_NOTIFY, "Folder Error", msg)} catch (_) {}
+        return
+    }
+
+    const file = files.next()
+
+    if (files.hasNext()){
+        Logger.log("More than one file in folder")
+        const msg = `${folder} has multiple files, ${folder} must have only one file`
+        try { GmailApp.sendEmail(FAILURE_NOTIFY, "Folder Error", msg)} catch (_) {}
+        return
+    }
+
+    return file.getId()
+}
+
+
+function sendEmail(recipient, subject, body, html){
+    
+    const pdfId = grabFile()
+    if (!pdfId) {
+        Logger.log("File retrieval failed — email not sent, check logs")
+        return
+    }
+
+    const file = DriveApp.getFileById(pdfId)
+    const pdfName = file.getName()
+    Logger.log(`Grabbed file ${pdfName}`)
 
     let pdfBlob
 
     try {
-        pdfBlob = DriveApp.getFileById(pdfId).getBlob().setName("Water_Bill_Invoice.pdf")
+        pdfBlob = file.getBlob().setName("Water_Bill_Invoice.pdf")
     } catch (err) {
         const msg = `Asset fetch failed: ${err && err.message}`
         Logger.log(msg)
         try { GmailApp.sendEmail(FAILURE_NOTIFY, "Water Bill Reminder FAILED (assets)", msg) 
         } catch (_) {}
-    throw err
+        throw err
     }
 
     const opts = {
